@@ -1,0 +1,16 @@
+commands:
+  example:
+    - "[console] give %player% diamond 64"
+    - "[player] say I got 64 diamonds"
+    - "[message] You were given 64 diamonds!"
+
+messages:
+  console_error: "&cYou must be a player to use this command"
+  no_permission: "&cYou don't have permission"
+  usage_error: "&cUsage: /asc <add/remove/get> [identifier]"
+  click_stand: "&aClick an armor stand to complete the command"
+  invalid_identifier: "&cThat identifier does not exist in the config"
+  added: "&aAdded identifier %identifier% to the armor stand"
+  removed: "&eRemoved the armor stand's identifiers"
+  no_identifier: "&cThat armor stand has no identifiers"
+  get: "&aThe armor stand has the following identifiers: %identifiers%"

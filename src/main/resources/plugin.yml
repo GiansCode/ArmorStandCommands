@@ -1,0 +1,7 @@
+name: ArmorStandCommands
+version: ${project.version}
+author: Mas281
+main: me.itsmas.armorstandcommands.ArmorStandCommands
+
+commands:
+  asc:
