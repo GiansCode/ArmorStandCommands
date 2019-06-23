@@ -37,16 +37,4 @@ public class Util
     {
         plugin.getLogger().log(Level.WARNING, msg);
     }
-
-    public static String combine(String[] args, int beginIndex)
-    {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = beginIndex; i < args.length; i++)
-        {
-            builder.append(args[i]).append(" ");
-        }
-
-        return builder.toString().trim();
-    }
 }

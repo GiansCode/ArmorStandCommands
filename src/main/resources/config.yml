@@ -1,8 +1,7 @@
-commands:
-  example:
-    - "[console] give %player% diamond 64"
-    - "[player] say I got 64 diamonds"
-    - "[message] You were given 64 diamonds!"
+actions:
+  diamonds:
+    - "[CONSOLECOMMAND] give %player_name% diamond 64"
+    - "[MESSAGE] &bYou were given 64 diamonds!"
 
 messages:
   console_error: "&cYou must be a player to use this command"

@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
+
 public class DataManager
 {
     private final ArmorStandCommands plugin;
@@ -34,9 +36,9 @@ public class DataManager
     {
         dataConfig.set("stands", null);
 
-        standDatas.forEach((id, datas) ->
+        standActions.forEach((id, datas) ->
         {
-            List<String> ids = datas.stream().map(CommandData::getId).collect(Collectors.toList());
+            List<String> ids = datas.stream().map(ActionData::getId).collect(Collectors.toList());
 
             dataConfig.set("stands." + id, ids);
         });
@@ -55,44 +57,47 @@ public class DataManager
     public void handleInteract(Player player, ArmorStand stand)
     {
         UUID entityId = stand.getUniqueId();
-        Set<CommandData> datas = standDatas.get(entityId);
+        Set<ActionData> datas = standActions.get(entityId);
 
         if (datas == null)
         {
-            // No commands associated with this stand
+            // No identifiers associated with this stand
             return;
         }
 
         datas.forEach(data -> data.execute(player));
     }
 
-    public void addData(ArmorStand stand, CommandData data)
+    public void addData(ArmorStand stand, ActionData data)
     {
         UUID uuid = stand.getUniqueId();
 
-        if (!standDatas.containsKey(uuid))
+        if (!standActions.containsKey(uuid))
         {
-            standDatas.put(uuid, new HashSet<>());
+            standActions.put(uuid, new HashSet<>());
         }
 
-        standDatas.get(uuid).add(data);
+        standActions.get(uuid).add(data);
     }
 
     public boolean hasData(ArmorStand stand)
     {
-        return standDatas.containsKey(stand.getUniqueId());
+        return standActions.containsKey(stand.getUniqueId());
     }
 
     public void clearData(ArmorStand stand)
     {
-        standDatas.remove(stand.getUniqueId());
+        standActions.remove(stand.getUniqueId());
     }
 
     public void tellDatas(Player player, ArmorStand stand)
     {
         assert hasData(stand);
 
-        String ids = standDatas.get(stand.getUniqueId()).stream().map(CommandData::getId).collect(Collectors.joining(", "));
+        String ids = standActions.get(stand.getUniqueId())
+            .stream()
+            .map(ActionData::getId)
+            .collect(joining(", "));
 
         player.sendMessage(Message.GET.value().replace("%identifiers%", ids));
     }
@@ -100,13 +105,13 @@ public class DataManager
     private File file;
     private YamlConfiguration dataConfig;
 
-    private Map<UUID, Set<CommandData>> standDatas = new HashMap<>();
+    private final Map<UUID, Set<ActionData>> standActions = new HashMap<>();
 
-    private Set<CommandData> commandDatas = new HashSet<>();
+    private final Set<ActionData> actionDatas = new HashSet<>();
 
-    public CommandData getData(String id)
+    public ActionData getData(String id)
     {
-        for (CommandData data : commandDatas)
+        for (ActionData data : actionDatas)
         {
             if (data.getId().equalsIgnoreCase(id))
             {
@@ -129,34 +134,14 @@ public class DataManager
         dataConfig = YamlConfiguration.loadConfiguration(file);
     }
 
+    private final String actionsPath = "actions";
+
     private void parseCommands()
     {
-        String path = "commands";
-
-        for (String id : plugin.getConfig().getConfigurationSection(path).getKeys(false))
+        for (String identifier : plugin.getConfig().getConfigurationSection(actionsPath).getKeys(false))
         {
-            List<String> commands = plugin.getConfig(path + "." + id);
-
-            Map<CommandData.CommandType, String> commandData = new HashMap<>();
-
-            commands.forEach(command ->
-            {
-                String[] split = command.split(" ");
-
-                CommandData.CommandType commandType = CommandData.CommandType.fromString(split[0]);
-
-                if (commandType == null)
-                {
-                    Util.logErr("Could not recognise command type for ID '" + id + "'");
-                    return;
-                }
-
-                String cmd = Util.colour(Util.combine(split, 1));
-
-                commandData.put(commandType, cmd);
-            });
-
-            commandDatas.add(new CommandData(id, commandData));
+            List<String> actions = plugin.getConfig(actionsPath + "." + identifier);
+            actionDatas.add(new ActionData(identifier, actions));
         }
     }
 
@@ -167,11 +152,11 @@ public class DataManager
         for (String entityId : dataConfig.getConfigurationSection(basePath).getKeys(false))
         {
             List<String> datas = dataConfig.getStringList(basePath + "." + entityId);
-            Set<CommandData> commandDatas = new HashSet<>();
+            Set<ActionData> commandDatas = new HashSet<>();
 
             for (String id : datas)
             {
-                CommandData cmdData = getData(id);
+                ActionData cmdData = getData(id);
 
                 if (cmdData != null)
                 {
@@ -179,7 +164,7 @@ public class DataManager
                 }
             }
 
-            standDatas.put(UUID.fromString(entityId), commandDatas);
+            standActions.put(UUID.fromString(entityId), commandDatas);
         }
     }
 }

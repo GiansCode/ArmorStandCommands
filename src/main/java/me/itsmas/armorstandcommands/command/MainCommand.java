@@ -1,7 +1,7 @@
 package me.itsmas.armorstandcommands.command;
 
 import me.itsmas.armorstandcommands.ArmorStandCommands;
-import me.itsmas.armorstandcommands.data.CommandData;
+import me.itsmas.armorstandcommands.data.ActionData;
 import me.itsmas.armorstandcommands.message.Message;
 import me.itsmas.armorstandcommands.util.Util;
 import org.bukkit.command.Command;
@@ -103,9 +103,8 @@ public class MainCommand implements CommandExecutor, Listener
 
     private void sendArmorStandMessage(Player player, String[] args)
     {
-        Util.message(player, Message.CLICK_STAND);
-
         argMap.put(player, args);
+        Util.message(player, Message.CLICK_STAND);
     }
 
     @EventHandler
@@ -136,8 +135,7 @@ public class MainCommand implements CommandExecutor, Listener
             if (args[0].equalsIgnoreCase("add"))
             {
                 String identifier = args[1];
-
-                CommandData data = plugin.getDataManager().getData(identifier);
+                ActionData data = plugin.getDataManager().getData(identifier);
 
                 if (data == null)
                 {
@@ -145,8 +143,8 @@ public class MainCommand implements CommandExecutor, Listener
                     return;
                 }
 
-                player.sendMessage(Message.ADDED.value().replace("%identifier%", identifier));
                 plugin.getDataManager().addData(stand, data);
+                player.sendMessage(Message.ADDED.value().replace("%identifier%", identifier));
             }
             else if (args[0].equalsIgnoreCase("remove"))
             {
@@ -156,8 +154,8 @@ public class MainCommand implements CommandExecutor, Listener
                     return;
                 }
 
-                Util.message(player, Message.REMOVED);
                 plugin.getDataManager().clearData(stand);
+                Util.message(player, Message.REMOVED);
             }
             else if (args[0].equalsIgnoreCase("get"))
             {

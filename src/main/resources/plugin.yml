@@ -1,7 +1,10 @@
 name: ArmorStandCommands
 version: ${project.version}
 author: Mas281
+
+depend: [ActionUtil]
 main: me.itsmas.armorstandcommands.ArmorStandCommands
+api-version: 1.14
 
 commands:
   asc:

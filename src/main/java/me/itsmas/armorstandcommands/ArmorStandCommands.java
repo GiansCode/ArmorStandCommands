@@ -13,7 +13,6 @@ public class ArmorStandCommands extends JavaPlugin
     public void onEnable()
     {
         saveDefaultConfig();
-
         Message.init(this);
 
         dataManager = new DataManager(this);
