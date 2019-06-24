@@ -28,7 +28,7 @@ public class DataManager
         this.plugin = plugin;
 
         createDataFile();
-        parseCommands();
+        parseActions();
         parseStands();
     }
 
@@ -136,7 +136,7 @@ public class DataManager
 
     private final String actionsPath = "actions";
 
-    private void parseCommands()
+    private void parseActions()
     {
         for (String identifier : plugin.getConfig().getConfigurationSection(actionsPath).getKeys(false))
         {
@@ -145,9 +145,14 @@ public class DataManager
         }
     }
 
+    private final String basePath = "stands";
+
     private void parseStands()
     {
-        String basePath = "stands";
+        if (!dataConfig.contains(basePath))
+        {
+            return;
+        }
 
         for (String entityId : dataConfig.getConfigurationSection(basePath).getKeys(false))
         {
